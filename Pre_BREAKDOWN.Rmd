@@ -9,7 +9,7 @@ output: html_document
 
 ```{r , include=FALSE}
 #setwd("E:/One/OneDrive - The University of Kansas/Amin/Thesis/Paper #Lane/Analysis")
-setwd("C:/Users/m522a270/OneDrive - The University of Kansas/Amin/Thesis/Paper #Lane/Analysis")
+#setwd("C:/Users/m522a270/OneDrive - The University of Kansas/Amin/Thesis/Paper #Lane/Analysis")
 library(reshape)
 library(car)
 library(MASS)
