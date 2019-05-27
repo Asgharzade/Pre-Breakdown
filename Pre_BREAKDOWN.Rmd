@@ -1,0 +1,729 @@
+---
+title: "Gemetry paper"
+author: "Amin Asgharzadeh"
+date: "May 27, 2018"
+output: html_document
+---
+
+
+
+```{r , include=FALSE}
+#setwd("E:/One/OneDrive - The University of Kansas/Amin/Thesis/Paper #Lane/Analysis")
+setwd("C:/Users/m522a270/OneDrive - The University of Kansas/Amin/Thesis/Paper #Lane/Analysis")
+library(reshape)
+library(car)
+library(MASS)
+library(ggplot2)
+library(plyr)
+library(faraway)
+library(extrafont)
+```
+
+```{r, include=FALSE}
+
+DATALL <- read.csv("DATALL.csv")
+
+DATALL$LANE <- as.factor(DATALL$LANE)
+DATALL$MET  <- as.factor(DATALL$MET)
+DATALL <- subset(DATALL, SITE == "M"|   SITE == "K" |  SITE == "Q"|  SITE == "S"|  SITE == "A"|  SITE == "R" |  SITE == "N"
+|  SITE == "E"  |  SITE == "L"  |  SITE == "U" |  SITE == "F"|  SITE == "V" |  SITE == "I" |  SITE == "G")
+
+```
+
+#### Three lane sites (NOT METERED)
+Analysis for pre-breakdown flow for 3-lane sites:
+
+```{r}
+L3N <- subset(DATALL, SITE == "Q" |   SITE == "S" |   SITE == "K" )
+
+ggplot(L3N , aes(x = VOL, fill = SITE)) +
+geom_density(alpha = 0.5, colour = "black", lwd = 0.7 ) +
+theme_classic() +
+
+scale_x_continuous(name = "Flow (pc/hr/ln)" , limits = c(750,2750) , breaks = seq(750,2750,250)) +
+scale_y_continuous(name = "PDF probability") +
+
+theme(text = element_text(size=12), axis.text.x = element_text(angle=0 ,size =12) , axis.text.y = element_text(angle=0 ,size =12)) +
+  
+#ggtitle("Density Plots for Pre-Breakdown Flow for Three-Lane Sites") +
+scale_fill_discrete(name = "Sites")
+
+#################################
+ggplot(L3N , aes(SITE, VOL, fill = SITE)) + geom_boxplot( alpha = 0.8) +
+theme_classic() +
+  
+scale_x_discrete(name = "Site" ) +
+scale_y_continuous(name = "Flow (pc/hr/ln)") +
+
+theme(text = element_text(size=12), axis.text.x = element_text(angle=0 ,size =12) , axis.text.y = element_text(angle=0 ,size =12)) + 
+
+#ggtitle("Boxplot analysis Pre-Breakdown Flow at Three-Lane Sites") +
+scale_fill_discrete(name = "Sites") + 
+  theme(legend.text = element_text(size = 12))
+
+#################################
+
+ggplot(L3N , aes(x = VOL)) +
+geom_density(lwd = 0.7, fill = "#7D7D7D" ) +
+theme_classic() +
+  
+scale_x_continuous(name = "Flow (pc/hr/ln)" , limits = c(1000,2750) , breaks = seq(1000,2750,250)) +
+scale_y_continuous(name = "PDF probability") +
+
+theme(text = element_text(size=12), axis.text.x = element_text(angle=0 ,size =12) , axis.text.y = element_text(angle=0 ,size =12)) + 
+
+#ggtitle("Aggragated Density Plots for Pre-Breakdown Flow for Three-Lane Sites") +
+scale_fill_discrete(name = "Sites") + 
+theme(legend.text = element_text(size = 12))
+
+#################################
+ggplot(L3N , aes(SITE, VOL, fill = SITE)) + geom_violin(alpha = 0.8) +
+theme_classic() +
+  
+scale_x_discrete(name = "Site" ) +
+scale_y_continuous(name = "Flow (pc/hr/ln)") +
+
+theme(text = element_text(size=12), axis.text.x = element_text(angle=0 ,size =12) , axis.text.y = element_text(angle=0 ,size =12)) + 
+
+#ggtitle("Boxplot analysis Pre-Breakdown Flow at Three-Lane Sites") +
+scale_fill_discrete(name = "Sites") + 
+theme(legend.text = element_text(size = 12))
+
+
+ggsave("WW1.png", width = 4, height = 3)
+
+```
+
+
+#### Four lane site (NOT METERED)
+
+```{r}
+L4N <- subset(DATALL, SITE == "F" |SITE == "V")
+
+ggplot(L4N , aes(x = VOL, fill = SITE)) +
+geom_density(alpha = 0.5 , color = "black" , lwd = 0.7) +
+theme_classic() +
+
+scale_x_continuous(name = "Flow (pc/hr/ln)" , limits = c(1000,2750) , breaks = seq(1000,2750,250)) +
+scale_y_continuous(name = "PDF probability") +
+
+theme(text = element_text(size=12), axis.text.x = element_text(angle=0 ,size =12) , axis.text.y = element_text(angle=0 ,size =12)) + 
+
+#ggtitle("Density Plots for Pre-Breakdown Flow for Four-Lane Sites") +
+scale_fill_discrete(name = "Sites")
+
+#################################
+ggplot(L4N , aes(SITE, VOL, fill = SITE)) + geom_boxplot(alpha = 0.8 , width = 0.5) +
+theme_classic() +
+  
+scale_x_discrete(name = "Site" ) +
+scale_y_continuous(name = "Flow (pc/hr/ln)") +
+
+theme(text = element_text(size=12), axis.text.x = element_text(angle=0 ,size =12) , axis.text.y = element_text(angle=0 ,size =12)) + 
+
+#ggtitle("Boxplot analysis Pre-Breakdown Flow at Four-Lane Sites") +
+scale_fill_discrete(name = "Sites")
+
+#################################
+ggplot(L4N , aes(SITE, VOL, fill = SITE)) + geom_violin(alpha = 0.8) +
+theme_classic() +
+  
+scale_x_discrete(name = "Site" ) +
+scale_y_continuous(name = "Flow (pc/hr/ln)") +
+
+theme(text = element_text(size=12), axis.text.x = element_text(angle=0 ,size =12) , axis.text.y = element_text(angle=0 ,size =12)) + 
+
+#ggtitle("Boxplot analysis Pre-Breakdown Flow at Four-Lane Sites") +
+scale_fill_discrete(name = "Sites")
+
+#################################
+ggplot(L4N , aes(x = VOL, fill = SITE)) +
+geom_density(alpha = 0.5 ,fill="black", colour = "black" , lwd = 0.7 ) +
+theme_classic() +
+  
+scale_x_continuous(name = "Flow (pc/hr/ln)" , limits = c(1000,2750) , breaks = seq(1000,2750,250)) +
+scale_y_continuous(name = "PDF probability") +
+
+theme(text = element_text(size=12), axis.text.x = element_text(angle=0 ,size =12) , axis.text.y = element_text(angle=0 ,size =12)) + 
+
+#ggtitle("Aggragated Density Plot for Pre-Breakdown Flow for Four-Lane Sites") +
+scale_fill_discrete(name = "Sites")
+
+```
+
+
+####5 lanes (4+1)
+
+
+```{r}
+L5_41 <- subset(DATALL, SITE == "A" | SITE == "N")
+
+
+ggplot(L5_41 , aes(x = VOL, fill = SITE)) +
+geom_density(alpha = 0.5 , color = "black" , lwd = 0.7 ) +
+theme_classic() +
+  
+scale_x_continuous(name = "Flow (pc/hr/ln)" , limits = c(1000,2750) , breaks = seq(1000,2750,250)) +
+scale_y_continuous(name = "PDF probability") +
+
+theme(text = element_text(size=12), axis.text.x = element_text(angle=0 ,size =12) , axis.text.y = element_text(angle=0 ,size =12)) + 
+
+#ggtitle("Density Plot for Pre-Breakdown Flow for Five-Lane Sites") +
+scale_fill_discrete(name = "Sites")
+
+
+#################################
+ggplot(L5_41 , aes(SITE, VOL, fill = SITE)) + geom_boxplot(alpha = 0.8 , width = 0.5) +
+theme_classic() +
+  
+scale_x_discrete(name = "Site" ) +
+scale_y_continuous(name = "Flow (pc/hr/ln)") +
+
+theme(text = element_text(size=12), axis.text.x = element_text(angle=0 ,size =12) , axis.text.y = element_text(angle=0 ,size =12)) + 
+
+#ggtitle("Boxplot analysis Pre-Breakdown Flow at Five-Lane Sites") +
+scale_fill_discrete(name = "Sites")
+
+#################################
+ggplot(L5_41 , aes(SITE, VOL, fill = SITE)) + geom_violin(alpha = 0.8) +
+theme_classic() +
+  
+scale_x_discrete(name = "Site" ) +
+scale_y_continuous(name = "Flow (pc/hr/ln)") +
+
+theme(text = element_text(size=12), axis.text.x = element_text(angle=0 ,size =12) , axis.text.y = element_text(angle=0 ,size =12)) + 
+
+#ggtitle("Boxplot analysis Pre-Breakdown Flow at Five-Lane Sites") +
+scale_fill_discrete(name = "Sites")
+
+#################################
+ggplot(L5_41 , aes(x = VOL, fill = SITE)) +
+geom_density(alpha = 0.5 , colour = "black" , lwd = 0.7 ) +
+theme_classic() +
+  
+scale_x_continuous(name = "Flow (pc/hr/ln)" , limits = c(1000,2750) , breaks = seq(1000,2750,250)) +
+scale_y_continuous(name = "PDF probability") +
+
+theme(text = element_text(size=12), axis.text.x = element_text(angle=0 ,size =12) , axis.text.y = element_text(angle=0 ,size =12)) + 
+
+#ggtitle("Aggragated Density Plot for Pre-Breakdown Flow for Five-Lane Sites") +
+scale_fill_discrete(name = "Sites")
+
+
+
+```
+
+
+#### 5 lanes (3+2)
+
+```{r}
+L5_32 <- subset(DATALL, SITE == "R")
+
+
+ggplot(L5_32 , aes(x = VOL, fill = SITE)) +
+geom_density(alpha = 0.5 , color = "black" , lwd = 0.7 ) +
+theme_classic() +
+scale_x_continuous(name = "Flow (pc/hr/ln)" , limits = c(1000,2750) , breaks = seq(1000,2750,250)) +
+scale_y_continuous(name = "PDF probability") +
+
+theme(text = element_text(size=12), axis.text.x = element_text(angle=0 ,size =12) , axis.text.y = element_text(angle=0 ,size =12)) + 
+
+#ggtitle("Density Plot for Pre-Breakdown Flow for Five-Lane Sites") +
+scale_fill_discrete(name = "Sites")
+
+
+#################################
+ggplot(L5_32 , aes(SITE, VOL, fill = SITE)) + geom_boxplot(alpha = 0.8 , width = 0.5) +
+theme_classic() +
+  
+scale_x_discrete(name = "Site" ) +
+scale_y_continuous(name = "Flow (pc/hr/ln)") +
+
+theme(text = element_text(size=12), axis.text.x = element_text(angle=0 ,size =12) , axis.text.y = element_text(angle=0 ,size =12)) + 
+
+#ggtitle("Boxplot analysis Pre-Breakdown Flow at Five-Lane Sites") +
+scale_fill_discrete(name = "Sites")
+
+#################################
+ggplot(L5_32 , aes(SITE, VOL, fill = SITE)) + geom_violin(alpha = 0.8) +
+theme_classic() +
+  
+scale_x_discrete(name = "Site" ) +
+scale_y_continuous(name = "Flow (pc/hr/ln)") +
+
+theme(text = element_text(size=12), axis.text.x = element_text(angle=0 ,size =12) , axis.text.y = element_text(angle=0 ,size =12)) + 
+
+#ggtitle("Boxplot analysis Pre-Breakdown Flow at Five-Lane Sites") +
+scale_fill_discrete(name = "Sites")
+
+
+```
+
+#### 3-Lane Metered
+
+```{r}
+DATA3M <- subset(DATALL, SITE == "M")
+
+ggplot(DATA3M , aes(x = VOL)) +
+geom_density(alpha = 0.5 , color = "black" , lwd = 0.7, fill = "dark grey") +
+theme_classic() +
+
+scale_x_continuous(name = "Flow (pc/hr/ln)" , limits = c(1000,2750) , breaks = seq(1000,2750,250)) +
+scale_y_continuous(name = "PDF probability") +
+
+theme(text = element_text(family="Arial" , size=12), axis.text.x = element_text(family="Arial" , angle=0 ,size =12) , axis.text.y = element_text(family="Arial" , angle=0 ,size =12)) + 
+
+#ggtitle("Density Plots for Pre-Breakdown Flow for Three-Lane Sites (METERED)") +
+scale_fill_discrete(name = "Sites")
+
+
+############################
+
+ggplot(DATA3M , aes(SITE, VOL)) + geom_boxplot(alpha = 0.8 ,width = 0.3, fill = "dark grey") +
+theme_classic() +
+scale_x_discrete(name = "Site" ) +
+scale_y_continuous(name = "Flow (pc/hr/ln)" , limits = c(1250,2750)) +
+
+theme(text = element_text(family="Arial" ,size=12) , axis.text.y = element_text(family="Arial" ,angle=0 ,size =12),legend.text = element_text(size = 12),axis.text.x=element_blank() , legend.position = "bottom") + 
+
+#ggtitle("Boxplot analysis Pre-Breakdown Flow at Three-Lane Sites (Metered)") +
+scale_fill_discrete(name = "Sites")
+
+```
+
+
+#### 4-Lane with Lane Drop
+
+```{r}
+DATA4D <- subset(DATALL, SITE == "I")
+
+ggplot(DATA4D , aes(x = VOL)) +
+geom_density(alpha = 0.5 , color = "black" , lwd = 0.7, fill = "dark grey") +
+theme_classic() +
+
+scale_x_continuous(name = "Flow (pc/hr/ln)" , limits = c(1000,2750) , breaks = seq(1000,2750,250)) +
+scale_y_continuous(name = "PDF probability") +
+
+theme(text = element_text(family="Arial" , size=12), axis.text.x = element_text(family="Arial" , angle=0 ,size =12) , axis.text.y = element_text(family="Arial" , angle=0 ,size =12)) + 
+
+#ggtitle("Density Plots for Pre-Breakdown Flow for Three-Lane Sites (METERED)") +
+scale_fill_discrete(name = "Sites")
+
+
+############################
+
+ggplot(DATA4D , aes(SITE, VOL)) + geom_boxplot(alpha = 0.8 ,width = 0.3, fill = "dark grey") +
+theme_classic() +
+scale_x_discrete(name = "Site" ) +
+scale_y_continuous(name = "Flow (pc/hr/ln)" , limits = c(1250,2750)) +
+
+theme(text = element_text(family="Arial" ,size=12) , axis.text.y = element_text(family="Arial" ,angle=0 ,size =12),legend.text = element_text(size = 12),axis.text.x=element_blank() , legend.position = "bottom") + 
+
+#ggtitle("Boxplot analysis Pre-Breakdown Flow at Three-Lane Sites (Metered)") +
+scale_fill_discrete(name = "Sites")
+
+```
+
+#### 4-Lane Metered
+
+```{r}
+DATA3M <- subset(DATALL,  SITE == "L" | SITE == "U" )
+
+ggplot(DATA3M , aes(x = VOL, fill = SITE)) +
+geom_density(alpha = 0.5 , color = "black" , lwd = 0.7) +
+theme_classic() +
+
+scale_x_continuous(name = "Flow (pc/hr/ln)" , limits = c(1000,2750) , breaks = seq(1000,2750,250)) +
+scale_y_continuous(name = "PDF probability") +
+
+theme(text = element_text(family="Arial" , size=12), axis.text.x = element_text(family="Arial" , angle=0 ,size =12) , axis.text.y = element_text(family="Arial" , angle=0 ,size =12)) + 
+
+#ggtitle("Density Plots for Pre-Breakdown Flow for Three-Lane Sites (METERED)") +
+scale_fill_discrete(name = "Sites")
+
+
+############################
+
+ggplot(DATA3M , aes(x = SITE, y = VOL, fill = SITE)) + geom_boxplot(alpha = 0.8 ,width = 0.3) +
+theme_classic() +
+  
+scale_x_discrete(name = "Site" ) +
+scale_y_continuous(name = "Flow (pc/hr/ln)" , limits = c(1250,2750)) +
+
+theme(text = element_text(family="Arial" ,size=12 , color = "black") , axis.text.y = element_text(family="Arial" ,angle=0 ,size =12 , color = "black"),legend.text = element_text(size = 12 , color = "black"),axis.text.x=element_blank() , axis.title.x=element_blank() , legend.position = "bottom") + 
+
+#ggtitle("Boxplot analysis Pre-Breakdown Flow at Three-Lane Sites (Metered)") +
+scale_fill_discrete(name = "Sites")
+
+###############################
+
+ggplot(DATA3M , aes(x = VOL)) +
+geom_density(alpha = 0.5 , color = "black" , lwd = 0.7, fill = "grey") +
+theme_classic() +
+
+scale_x_continuous(name = "Flow (pc/hr/ln)" , limits = c(1000,2750) , breaks = seq(1000,2750,250)) +
+scale_y_continuous(name = "PDF probability") +
+
+theme(text = element_text(family="Arial" , size=12), axis.text.x = element_text(family="Arial" , angle=0 ,size =12 , color = "black") , axis.text.y = element_text(family="Arial" , angle=0 ,size =12 , color = "black")) + 
+
+#ggtitle("Density Plots for Pre-Breakdown Flow for Three-Lane Sites (METERED)") +
+scale_fill_discrete(name = "Sites")
+
+
+############################
+
+ggplot(DATA3M , aes(y = VOL)) + geom_boxplot(alpha = 0.8 ,width = 0.3, fill = "grey") +
+theme_classic() +
+  
+scale_x_discrete(name = "Site" ) +
+scale_y_continuous(name = "Flow (pc/hr/ln)" , limits = c(1250,2750)) +
+
+theme(text = element_text(family="Arial" ,size=12 , color = "black") , axis.text.y = element_text(family="Arial" ,angle=0 ,size =12 , color = "black"),legend.text = element_text(size = 12 , color = "black"), legend.position = "bottom") + 
+
+#ggtitle("Boxplot analysis Pre-Breakdown Flow at Three-Lane Sites (Metered)") +
+scale_fill_discrete(name = "Sites")
+
+
+############################
+
+
+
+```
+
+Site D appears to be different than the other sites. This might be due to the fact that the lane drop is happeing within the ramp area. In other words, 2-lane ramp was converted into a 1 lane ramp and merging a 4-lane freeway leading into a five lane downstream (detector location).
+
+## ALL SITES PRE-BREAKDOWN FLOW RATE DENSITY COMPARISON (NOT METERED)
+```{r}
+
+LNMALL <- subset(DATALL, SITE == "K" |   SITE == "Q" |   SITE == "S" | SITE == "A" |SITE == "R"|SITE == "N"|SITE == "F"|SITE == "V"|SITE == "I" | SITE == "G")
+
+#################################
+
+ggplot(LNMALL , aes(x = VOL, fill = LANE)) +
+geom_density(colour = "black", lwd = 0.3, position = "stack") +
+theme_classic() + 
+scale_x_continuous(name = "Flow Rate (pc/hr/ln)" , limits = c(1000,3000) , breaks = seq(1000,3000,500)) +
+scale_fill_manual(values = c("#FFFFFF", "#E6E6E6" , "#CCCCCC" , "#999999" , "#666666" , "#333333" , "#000000") , labels = c(" 3-Lane", " 4-Lane" , " 4-Lane (3+1)" , " 4-Lane (Followed by Lane Drop)" , " 5-Lane (3+2)" , " 5-Lane (4+1)" , " 5-Lane (4+1) (Followed by Lane Drop)")) +
+scale_y_continuous(name = "Density" , expand = c(0, 0), limits = c(0,0.02)) +
+
+theme(text = element_text(family="Arial" ,size=12 , color = "black"), axis.text.x = element_text(family="Arial" ,angle=0 ,size =12 , color = "black") , axis.text.y = element_text(family="Arial" ,angle=0 ,size =12 , color = "black") , legend.position = c(0.75,0.5) , legend.text=element_text(size=10 , color = "black") , legend.title = element_blank()) + 
+
+#ggtitle("Aggragated Density Plot for Pre-Breakdown Flow forThee, Four, and Five-Lane Sites") +
+#scale_fill_discrete(name = "Sites" ,labels = c("3-Lane", "4-Lane" , "5-Lane"))
+
+ggsave("ALLDEN.png", width = 7, height = 5)
+
+################################# 
+
+ggplot(LNMALL , aes(LANE, VOL )) + geom_boxplot(alpha = 0.9 , width = 0.3 , fill = "#4E4E4E") +
+theme_classic() +
+scale_y_continuous(name = "Flow (pc/hr/ln)" , limits = c(1300, 3000)) +
+scale_x_discrete(labels = c(" 3-Lane", " 4-Lane" , " 4-Lane (3+1)" , " 4-Lane (Followed by Lane Drop)" , " 5-Lane (3+2)" , " 5-Lane (4+1)" , " 5-Lane (4+1) (Followed by Lane Drop)"))+
+scale_fill_manual(values = c("#CABD08", "#2E9FDF" , "#393939" , "#E87DD6" , "#CECECE" , "#0DC900" , "#C4591B")) +
+theme(text = element_text(family="Arial" ,size=12 , color = "black"), axis.text.x = element_text(family="Arial" ,angle=20 ,size =10 , color = "black", hjust = 1), axis.text.y = element_text(family="Arial" ,size =12 , color = "black")) + 
+#ggtitle("Aggragated Density Plot for Three, Four, and Five-Lane Sites") +
+
+theme(legend.text = element_text(size = 12 , color = "black")  , axis.title.x=element_blank() , legend.title = element_blank() , legend.position = "none")
+
+
+ggsave("ALLBOX.png", width = 6, height = 4)
+
+AVG <- tapply(LNMALL$VOL, LNMALL$LANE, mean, na.rm=TRUE)
+AVG <- data.frame(AVG)
+rownames(AVG) <- c(" 3-Lane", " 4-Lane" , " 4-Lane (3+1)" , " 4-Lane (Followed by Lane Drop)" , " 5-Lane (3+2)" , " 5-Lane (4+1)" , " 5-Lane (4+1) (Followed by Lane Drop)")
+print(AVG)
+
+```
+
+
+
+#### Three/Four-Lane Metered sites 
+```{r}
+
+LMALL <- subset(DATALL, SITE == "M" |   SITE == "E" |   SITE == "L" | SITE == "U" )
+
+LM3 <- subset(LMALL, LANE == "3")
+LM4 <- subset(LMALL, LANE == "4")
+
+#################################
+ggplot(LMALL , aes(x = VOL, fill = LANE)) +
+geom_density(alpha = 0.7 , colour = "black", lwd = 0.3) +
+theme_classic() + 
+scale_x_continuous(name = "Flow Rate (pc/hr/ln)" , limits = c(1000,3000) , breaks = seq(1000,3000,500)) +
+scale_y_continuous(name = "Density",expand = c(0, 0) , limits = c(0,0.003)) +
+scale_fill_manual(values = c("#B0B0B0", "#4E4E4E"), labels = c(" 3-Lane" , " 4-Lane")) +
+theme(text = element_text(family="Arial" ,size=10, color = "black"), axis.text.x = element_text(family="Arial" ,angle=0 ,size =10, color = "black") , axis.text.y = element_text(family="Arial" ,angle=0 ,size =10, color = "black") , legend.position = c(0.25,0.5) , legend.text=element_text(size=10) , legend.title = element_blank()) + 
+
+#ggtitle("Aggragated Density Plot for Pre-Breakdown Flow forThee, Four, and Five-Lane Sites") +
+#scale_fill_discrete(name = "Sites" ,labels = c("3-Lane", "4-Lane" , "5-Lane"))
+
+ggsave("Met4laneDist.png", width = 4, height = 3)
+
+#################################
+ggplot(LMALL , aes(LANE, VOL)) + 
+geom_boxplot(alpha = 1 , width = 0.3, fill = "#4E4E4E") +
+theme_classic() +
+scale_y_continuous(name = "Flow (pc/hr/ln)" , limits = c(1000,3000) , breaks = seq(1000,2750,250)) +
+scale_fill_manual(values = c("#B0B0B0", "#4E4E4E")) +
+scale_x_discrete(labels = c("3-Lane", "4-Lane"))+
+theme(text = element_text(family="Arial" ,size=10), axis.text.x = element_text(family="Arial" ,angle=0 ,size =10, color = "black"), axis.text.y = element_text(family="Arial" ,angle=0 ,size =10, color = "black")) + 
+#ggtitle("Aggragated Density Plot for Three, Four, and Five-Lane Sites") +
+
+theme(legend.text = element_text(size = 10, color = "black")  , axis.title.x=element_blank() , legend.title = element_blank() , legend.position = "none")
+
+ggsave("Met4laneBox.png", width = 4, height = 3)
+ 
+wilcox.test(LM3$VOL, LM4$VOL ,alt = "two.sided" ,  conf.level = 0.95 , conf.int = T)
+
+AVGM <- tapply(LMALL$VOL, LMALL$LANE, mean, na.rm=TRUE)
+AVGM <- data.frame(AVGM)
+rownames(AVGM) <- c("3-Lane", "4-Lane" , "4-Lane (Added)" , "4-Lane (Drop)" , "5-Lane (3+2)" , "5-Lane (4+1)" , "5-Lane (4+1) (Drop)")
+print(AVGM)
+
+
+
+```
+
+#### Three/Four-Lane Not Metered sites 
+```{r}
+
+LNMALL <- subset(DATALL, SITE == "K" |   SITE == "S" |   SITE == "Q" | SITE == "F" | SITE == "V")
+
+LNM3 <- subset(LNMALL, LANE == "3")
+LNM4 <- subset(LNMALL, LANE == "4")
+
+#################################
+ggplot(LNMALL , aes(x = VOL, fill = LANE)) +
+geom_density(alpha = 0.7 , colour = "black", lwd = 0.3) +
+theme_classic() + 
+scale_x_continuous(name = "Flow Rate (pc/hr/ln)"   , limits = c(1000,3000) , breaks = seq(1000,3000,500)) +
+scale_y_continuous(name = "Density",expand = c(0, 0) , limits = c(0,0.003)) +
+scale_fill_manual(values = c("#CABD08", "#2E9FDF"), labels = c(" 3-Lane" , " 4-Lane")) +
+theme(text = element_text(family="Arial" ,size=10, color = "black"), axis.text.x = element_text(family="Arial" ,angle=0 ,size =10, color = "black") , axis.text.y = element_text(family="Arial" ,angle=0 ,size =10, color = "black") , legend.position = c(0.8,0.5) , legend.text=element_text(size=10) , legend.title = element_blank())
+
+#ggtitle("Aggragated Density Plot for Pre-Breakdown Flow forThee, Four, and Five-Lane Sites") +
+
+ggsave("Met4laneDist.png", width = 4, height = 3)
+
+#################################
+ggplot(LNMALL , aes(LANE, VOL , fill = LANE)) + 
+geom_boxplot(alpha = 1 , width = 0.3) +
+theme_classic() +
+scale_y_continuous(name = "Flow (pc/hr/ln)" , limits = c(1000,2750) , breaks = seq(1000,2750,250)) +
+scale_fill_manual(values = c("#CABD08", "#2E9FDF")) +
+scale_x_discrete(labels = c(" 3-Lane", " 4-Lane") )+
+theme(text = element_text(family="Arial" ,size=12), axis.text.x = element_text(family="Arial" ,angle=0 ,size =12, color = "black"), axis.text.y = element_text(family="Arial" ,angle=0 ,size =12, color = "black")) + 
+#ggtitle("Aggragated Density Plot for Three, Four, and Five-Lane Sites") +
+
+theme(legend.text = element_text(size = 12, color = "black")  , axis.title.x=element_blank() , legend.title = element_blank() , legend.position = "none")
+
+ggsave("Met4laneBox.png", width = 4, height = 3)
+
+wilcox.test(LNM3$VOL, LNM4$VOL ,alt = "two.sided" ,  conf.level = 0.95 , conf.int = T)
+
+
+
+```
+
+
+
+
+#### Three-Lane Metered/Not Metered 
+```{r}
+
+L3ALL <- subset(DATALL, LANE == "3" )
+
+L3A <- subset(L3ALL, MET == 0)
+L3B <- subset(L3ALL, MET == 1)
+
+#################################
+ggplot(L3ALL , aes(x = VOL, fill = MET)) +
+geom_density(alpha = 0.8 , colour = "black", lwd = 0.3) +
+theme_classic() + 
+scale_x_continuous(name = "Flow Rate (pc/hr/ln)" , limits = c(1000,3000) , breaks = seq(1000,3000,500)) +
+scale_y_continuous(name = "Density",expand = c(0, 0)) +
+scale_fill_manual(values = c("#CABD08", "#2E9FDF"), labels = c(" Not Metered", " Metered")) +
+theme(text = element_text(family="Arial" ,size=10, color = "black"), axis.text.x = element_text(family="Arial" ,angle=0 ,size =10, color = "black") , axis.text.y = element_text(family="Arial" ,angle=0 ,size =10, color = "black") , legend.position = c(0.2,0.5) , legend.text=element_text(size=10) , legend.title = element_blank() ,    legend.background = element_rect(fill="transparent")) 
+
+#ggtitle("Aggragated Density Plot for Pre-Breakdown Flow forThee, Four, and Five-Lane Sites") +
+
+
+ggsave("COM_3L_1t.png", width = 4, height = 3)
+
+#################################
+ggplot(L3ALL , aes(x = MET, y = VOL , fill = MET)) + 
+geom_boxplot(alpha = 0.8 , width = 0.3) +
+theme_classic() +
+scale_y_continuous(name = "Flow (pc/hr/ln)" , limits = c(1000,2750) , breaks = seq(1000,2750,250)) +
+scale_x_discrete(labels = c("Non Metered", "Metered"))+
+scale_fill_manual(values = c("#CABD08", "#2E9FDF")) +
+theme(text = element_text(family="Arial" ,size=10, color = "black"), axis.text.x = element_text(family="Arial" ,angle=0 ,size =10, color = "black"), axis.text.y = element_text(family="Arial" ,angle=0 ,size =10, color = "black")) + 
+#ggtitle("Aggragated Density Plot for Three, Four, and Five-Lane Sites") +
+
+theme(legend.text = element_text(size = 10 , color = "black")  , axis.title.x=element_blank() , legend.title = element_blank() , legend.position = "none")
+
+ggsave("COM_3L_2.png", width = 4, height = 3)
+
+wilcox.test(L3A$VOL, L3B$VOL ,alt = "two.sided" ,  conf.level = 0.95 , conf.int = T)
+
+AVG3 <- tapply(L3ALL$VOL, L3ALL$MET, mean, na.rm=TRUE)
+AVG3 <- data.frame(AVG3)
+rownames(AVG3) <-  c("Non Metered", "Metered")
+print(AVG3)
+
+```
+
+
+
+#### Four-Lane Metered/Not Metered
+```{r}
+
+L4ALL <- subset(DATALL, LANE == "4" )
+
+L4A <- subset(L4ALL, MET == 0)
+L4B <- subset(L4ALL, MET == 1)
+
+#################################
+ggplot(L4ALL , aes(x = VOL, fill = MET)) +
+geom_density(alpha = 0.8 , colour = "black", lwd = 0.3) +
+theme_classic() + 
+scale_x_continuous(name = "Flow Rate (pc/hr/ln)" , limits = c(1000,3000) , breaks = seq(1000,3000,500)) +
+scale_y_continuous(name = "Density",expand = c(0, 0)) +
+scale_fill_manual(values = c("#CABD08", "#2E9FDF"), labels = c(" Not Metered", " Metered")) +
+theme(text = element_text(family="Arial" ,size= 10, color = "black"), axis.text.x = element_text(family="Arial" ,angle=0 ,size = 10, color = "black") , axis.text.y = element_text(family="Arial" ,angle=0 ,size =10, color = "black") , legend.position = c(0.2,0.5) , legend.text=element_text(size=10) , legend.title = element_blank()) + 
+
+#ggtitle("Aggragated Density Plot for Pre-Breakdown Flow forThee, Four, and Five-Lane Sites") +
+
+ggsave("COM_4L_1t.png", width = 4, height = 3)
+
+#################################
+ggplot(L4ALL , aes(x = MET, y = VOL , fill = MET)) + 
+geom_boxplot(alpha = 1 , width = 0.3) +
+theme_classic() +
+scale_y_continuous(name = "Flow (pc/hr/ln)" , limits = c(1000,2750) , breaks = seq(1000,2750,250)) +
+scale_fill_manual(values = c("#CABD08", "#2E9FDF")) +
+scale_x_discrete(labels = c("Non Metered", "Metered"))+
+theme(text = element_text(family="Arial" ,size=10, color = "black"), axis.text.x = element_text(family="Arial" ,angle=0 ,size =10, color = "black"), axis.text.y = element_text(family="Arial" ,angle=0 ,size =10, color = "black")) + 
+#ggtitle("Aggragated Density Plot for Three, Four, and Five-Lane Sites") +
+
+theme(legend.text = element_text(size = 10)  , axis.title.x=element_blank() , legend.title = element_blank() , legend.position = "none")
+
+ggsave("COM_4L_2.png", width = 4, height = 3)
+
+wilcox.test(L4A$VOL, L4B$VOL ,alt = "two.sided" ,  conf.level = 0.95 , conf.int = T)
+
+AVG4 <- tapply(L4ALL$VOL, L4ALL$MET, mean, na.rm=TRUE)
+AVG4 <- data.frame(AVG4)
+rownames(AVG4) <-  c("Non Metered", "Metered")
+print(AVG4)
+
+
+L3L4 <- subset(DATALL, LANE == "4" |LANE == "3")
+
+ggplot(L3L4 , aes(x = LANE, y = VOL , fill = MET)) + 
+geom_boxplot(alpha = 1 , width = 0.3) +
+theme_classic() +
+scale_y_continuous(name = "Flow (pc/hr/ln)" , limits = c(1000,3000) , breaks = seq(1000,3000,250)) +
+scale_fill_manual(values = c("#B0B0B0", "#4E4E4E"), labels = c("Not Metered" , "Metered")) +
+scale_x_discrete(labels = c("3-Lane", "4-Lane"))+
+theme(text = element_text(family="Arial" ,size=10, color = "black"), axis.text.x = element_text(family="Arial" ,angle=0 ,size =10, color = "black"), axis.text.y = element_text(family="Arial" ,angle=0 ,size =10, color = "black")) + 
+#ggtitle("Aggragated Density Plot for Three, Four, and Five-Lane Sites") +
+
+theme(legend.text = element_text(size = 10)  , axis.title.x=element_blank() , legend.title = element_blank() , legend.position = c(0.8,0.8))
+
+ggsave("COM_4L_2.png", width = 4, height = 3)
+
+```
+
+
+#### Four-Lane Not Metered sites (Regular/Lane Drop/Lane Add)
+```{r}
+
+L4DROP <- subset(DATALL, SITE == "F" |SITE == "V" |SITE == "I" | SITE == "G" )
+
+L4 <-  subset(DATALL, SITE == "F" |SITE == "V")
+L4D<-  subset(DATALL, SITE == "I")
+L4A<-  subset(DATALL, SITE == "G")
+
+#################################
+ggplot(L4DROP , aes(x = VOL, fill = CON)) +
+geom_density(alpha = 0.6 , colour = "black", lwd = 0.3) +
+theme_classic() + 
+scale_x_continuous(name = "Flow Rate (pc/hr/ln)" , limits = c(1000,2500) , breaks = seq(1000,2500,500)) +
+scale_y_continuous(name = "Density",expand = c(0, 0)) +
+scale_fill_manual(values = c("#CABD08", "#2E9FDF" , "#393939"), labels = c(" Added", " Dropped" , " Same")) +
+theme(text = element_text(family="Arial" ,size=12, color = "black"), axis.text.x = element_text(family="Arial" ,angle=0 ,size =12, color = "black") , axis.text.y = element_text(family="Arial" ,angle=0 ,size =12, color = "black") , legend.position = c(0.8,0.5) , legend.text=element_text(size=10) , legend.title = element_blank())  
+
+#ggtitle("Aggragated Density Plot for Pre-Breakdown Flow forThee, Four, and Five-Lane Sites") +
+#+ scale_fill_discrete(name = "Sites" ,labels = c("Not Metered", "Metered"))
+
+ggsave("COM_4DROP_1t.png", width = 4, height = 3)
+
+#################################
+ggplot(L4DROP , aes(x = CON, y = VOL , fill = CON)) + 
+geom_boxplot(alpha = 1 , width = 0.3) +
+theme_classic() +
+scale_y_continuous(name = "Flow (pc/hr/ln)" , limits = c(1000,2500) , breaks = seq(1000,2500,250)) +
+scale_x_discrete(labels = c("Lane Addition", "Lane Drop" , "Equal Lanes"))+
+scale_fill_manual(values = c("#CABD08", "#2E9FDF", "#393939")) +
+theme(text = element_text(family="Arial" ,size=12 , color = "black"), axis.text.x = element_text(family="Arial" ,angle=0 ,size =12, color = "black"), axis.text.y = element_text(family="Arial" ,angle=0 ,size =12 , color = "black")) + 
+#ggtitle("Aggragated Density Plot for Three, Four, and Five-Lane Sites") +
+
+theme(legend.text = element_text(size = 12)  , axis.title.x=element_blank() , legend.title = element_blank() , legend.position = "none")
+
+ggsave("COM_4DROP_2.png", width = 4, height = 3)
+
+wilcox.test(L4$VOL , L4A$VOL ,alt = "two.sided" ,  conf.level = 0.95 , conf.int = T)
+wilcox.test(L4D$VOL, L4A$VOL ,alt = "two.sided" ,  conf.level = 0.95 , conf.int = T)
+wilcox.test(L4D$VOL, L4$VOL  ,alt = "two.sided" ,  conf.level = 0.95 , conf.int = T)
+```
+
+
+#### Not Metered 5-Lane (4+1 / 3+2)
+```{r}
+
+L5    <-  subset(DATALL, SITE == "A" |SITE == "N" |SITE == "R")
+
+L5_41D<-  subset(DATALL, SITE == "A")
+L5_41 <-  subset(DATALL, SITE == "N")
+L5_32 <-  subset(DATALL, SITE == "R")
+
+#################################
+ggplot(L5 , aes(x = VOL, fill = LANE)) +
+geom_density(alpha = 0.5 , colour = "black", lwd = 0.3) +
+theme_classic() + 
+#scale_fill_manual(values = c("#CABD08", "#2E9FDF"), labels = c(" 5-Lane (3+2)", " 5-Lane (4+1)"))+
+scale_x_continuous(name = "Flow Rate (pc/hr/ln)" , limits = c(1000,2250) , breaks = seq(1000,2250,250)) +
+scale_y_continuous(name = "Density",expand = c(0, 0)) +
+
+theme(text = element_text(family="Arial" ,size=12), axis.text.x = element_text(family="Arial" ,angle=0 ,size =12) , axis.text.y = element_text(family="Arial" ,angle=0 ,size =12) , legend.position = c(0.8,0.5) , legend.text=element_text(size=10) , legend.title = element_blank())  
+
+#ggtitle("Aggragated Density Plot for Pre-Breakdown Flow forThee, Four, and Five-Lane Sites") +
+#+ scale_fill_discrete(name = "Sites" ,labels = c("Not Metered", "Metered"))
+
+ggsave("COM_5_1.png", width = 4, height = 3)
+
+#################################
+ggplot(L5 , aes(x = LANE, y = VOL , fill = LANE)) + 
+geom_boxplot(alpha = 0.8 , width = 0.3) +
+theme_classic() +
+scale_y_continuous(name = "Flow (pc/hr/ln)", limits = c(1000,2250) , breaks = seq(1000,2250,250)) +
+#scale_x_discrete(labels = c("5-Lane (3+2)", "5-Lane (4+1)"))+
+scale_fill_manual(values = c("#CABD08", "#2E9FDF" , "#A9A9A9")) +
+theme(text = element_text(family="Arial" ,size=12, color = "black"), axis.text.x = element_text(family="Arial" ,angle=0 ,size =12 , color = "black"), axis.text.y = element_text(family="Arial" ,angle=0 ,size =12, color = "black")) + 
+#ggtitle("Aggragated Density Plot for Three, Four, and Five-Lane Sites") +
+
+theme(legend.text = element_text(size = 12, color = "black")  , axis.title.x=element_blank() , legend.title = element_blank() , legend.position = "none")
+
+ggsave("COM_5_2.png", width = 4, height = 3)
+
+wilcox.test(L5_41$VOL, L5_32$VOL ,alt = "two.sided" ,  conf.level = 0.95 , conf.int = T)
+wilcox.test(L5_41D$VOL, L5_41$VOL ,alt = "two.sided" ,  conf.level = 0.95 , conf.int = T)
+
+wilcox.test(L5_41$VOL, L3A$VOL ,alt = "two.sided" ,  conf.level = 0.95 , conf.int = T)
+wilcox.test(L5_41$VOL, L4$VOL  ,alt = "two.sided" ,  conf.level = 0.95 , conf.int = T)
+```
+
+
+
+
